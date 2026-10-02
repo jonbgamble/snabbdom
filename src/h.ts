@@ -84,6 +84,18 @@ export function h(sel: any, b?: any, c?: any): VNode {
   ) {
     addNS(data, children, sel);
   }
+  const match = /^([^.#]+)(?:#([^.]*))?(?:\.(.*))?$/.exec(sel);
+  if (match) {
+    const [, tag, id, classNames] = match;
+    if (id) data.attrs = { id, ...data.attrs };
+    if (classNames !== undefined) {
+      const classes: Record<string, boolean> = {};
+      for (const name of classNames.match(/[^.\s]+/g) ?? [])
+        classes[name] = true;
+      data.class = { ...classes, ...data.class };
+    }
+    sel = tag.trim();
+  }
   return vnode(sel, data, children, text, undefined);
 }
 
